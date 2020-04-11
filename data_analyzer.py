@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 with open('data/cases.csv', mode='w') as csvfile: 
     fieldnames = ['id', 'url', 'name', 'name_abbreviation', 'decision_date', 'docket_number', 
                   'first_page', 'last_page', 'frontend_url',
-                  'citations', 'citation_0_type', 'citation_0', 'citation_1_type', 'citation_1', 'citation_2_type', 'citation_2',
+                  'citations_count', 'citation_0_type', 'citation_0', 'citation_1_type', 'citation_1', 'citation_2_type', 'citation_2',
                   'volume_barcode', 'volume_number',
                   'reporter_name', "reporter_id",
                   'court_id', 'court_name',
@@ -30,7 +30,7 @@ with open('data/cases.csv', mode='w') as csvfile:
                         break
                     case[f'citation_{i}_type'] = citation['type']
                     case[f'citation_{i}'] = citation['cite']
-                case['citations'] = len(case['citations'])
+                case['citations_count'] = len(case['citations'])
                 del case['citations']
 
                 case['volume_barcode'] = case['volume']['barcode']
