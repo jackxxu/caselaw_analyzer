@@ -1,4 +1,5 @@
-**-text
+**-xml
 .DS_store
 venv
 .vscode
+data
