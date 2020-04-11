@@ -5,16 +5,22 @@ import re
 import lzma, json
 import csv
 from bs4 import BeautifulSoup
+import datetime
+from dateutil import parser
+from dateutil.parser import ParserError
+
 
 with open('data/cases.csv', mode='w') as csvfile: 
-    fieldnames = ['id', 'url', 'name', 'name_abbreviation', 'decision_date', 'docket_number', 
+    fieldnames = ['id', 'url', 'name', 'name_abbreviation', 'body', 
+                  'decision_date', 'decision_year', 'decision_month', 
+                  'docket_number', 
                   'first_page', 'last_page', 'frontend_url',
                   'citations_count', 'citation_0_type', 'citation_0', 'citation_1_type', 'citation_1', 'citation_2_type', 'citation_2',
                   'volume_barcode', 'volume_number',
                   'reporter_name', "reporter_id",
                   'court_id', 'court_name',
-                  'jurisdiction_id', 'jurisdiction_name',
-                  'body']
+                  'jurisdiction_id', 'jurisdiction_name'
+                  ]
 
     output = csv.DictWriter(csvfile, fieldnames=fieldnames)
     output.writeheader()
@@ -23,6 +29,14 @@ with open('data/cases.csv', mode='w') as csvfile:
         with lzma.open(f'{state}-20200302-xml/data/data.jsonl.xz', mode='r') as in_file:
             for line in in_file:
                 case = json.loads(str(line, 'utf8'))
+
+                try:
+                    decision_date = parser.parse(case['decision_date'])
+                except ParserError as e: # if date is out of range, parse year & month
+                    decision_date = parser.parse(case['decision_date'][:7]) 
+
+                case['decision_year'] = decision_date.year
+                case['decision_month'] = decision_date.month
 
                 for i, citation in enumerate(case['citations']): 
                     if i > 3: 
